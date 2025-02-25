@@ -1,4 +1,6 @@
-﻿namespace Salter.Encryption;
+﻿using Salter.Encryption;
+
+namespace Salter.Core.Encryption;
 
 /// <summary>
 /// The <see cref="KeyManager"/> class extends the <see cref="SecretManager"/> class to manage encryption keys and initialization vectors.

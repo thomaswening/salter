@@ -1,8 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-using Salter.Core.Encryption;
-
-namespace Salter.Encryption;
+namespace Salter.Core.Encryption;
 
 /// <summary>
 /// The <see cref="KeyIvEncryptor"/> class provides methods for encrypting and decrypting data using symmetric encryption algorithms.
