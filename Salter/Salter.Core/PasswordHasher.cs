@@ -5,7 +5,7 @@ namespace Salter.Core;
 
 /// <summary>
 /// The <see cref="PasswordHasher"/> class provides methods for hashing, salting and validating passwords.
-/// </summary>s
+/// </summary>
 public class PasswordHasher
 {
     private readonly HashAlgorithmName hashAlgorithm;
@@ -19,36 +19,54 @@ public class PasswordHasher
         this.hashAlgorithm = hashAlgorithm == default ? HashAlgorithmName.SHA512 : hashAlgorithm;
     }
 
-    public string GenerateHash(string password, out string salt)
+    public string GenerateHash(char[] password, out string salt)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
+        if (password == null || password.Length == 0)
+        {
+            throw new ArgumentException("Password cannot be null or empty.", nameof(password));
+        }
 
         var saltBytes = RandomNumberGenerator.GetBytes(keySize);
         salt = Convert.ToHexString(saltBytes);
 
+        var passwordBytes = Encoding.UTF8.GetBytes(password);
         var hash = Rfc2898DeriveBytes.Pbkdf2(
-            Encoding.UTF8.GetBytes(password),
+            passwordBytes,
             saltBytes,
             iterations,
             hashAlgorithm,
             keySize);
+
+        // Clear sensitive data from memory directly after use!
+        Array.Clear(passwordBytes, 0, passwordBytes.Length);
+        Array.Clear(password, 0, password.Length);
 
         return Convert.ToHexString(hash);
     }
 
-    public bool Validate(string password, string hash, string salt)
+    public bool Validate(char[] password, string hash, string salt)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(password, nameof(password));
+        if (password is null || password.Length == 0)
+        {
+            throw new ArgumentException("Password cannot be null or empty.", nameof(password));
+        }
+
         ArgumentException.ThrowIfNullOrWhiteSpace(hash, nameof(hash));
         ArgumentException.ThrowIfNullOrWhiteSpace(salt, nameof(salt));
 
         var saltBytes = Convert.FromHexString(salt);
+        var passwordBytes = Encoding.UTF8.GetBytes(password);
         var newHash = Rfc2898DeriveBytes.Pbkdf2(
-            Encoding.UTF8.GetBytes(password),
+            passwordBytes,
             saltBytes,
             iterations,
             hashAlgorithm,
             keySize);
+
+        // Clear sensitive data from memory directly after use!
+
+        Array.Clear(passwordBytes, 0, passwordBytes.Length);
+        Array.Clear(password, 0, password.Length);
 
         var isValid = CryptographicOperations.FixedTimeEquals(newHash, Convert.FromHexString(hash));
 

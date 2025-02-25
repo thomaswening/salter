@@ -1,5 +1,4 @@
-﻿using System.Security;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Salter.Encryption;
 
@@ -9,6 +8,10 @@ namespace Salter.Encryption;
 /// </summary>
 internal abstract partial class SecretManager(SecretManager.SourceType sourceType)
 {
+    // The pattern for a valid environment variable name.
+    // - Must start with a letter or underscore.
+    // - Can only contain letters, numbers, and underscores.
+
     [GeneratedRegex("^[a-zA-Z_][a-zA-Z0-9_]*$")]
     private static partial Regex EnvironmentVariableNamePattern();
 
@@ -21,28 +24,21 @@ internal abstract partial class SecretManager(SecretManager.SourceType sourceTyp
 
     protected static void ValidateSource(string source, SourceType sourceType, string paramName)
     {
-        try
+        ArgumentException.ThrowIfNullOrWhiteSpace(source, paramName);
+
+        // Check if source is valid environment variable name if source type is environment.
+        if (sourceType is SourceType.Environment && !EnvironmentVariableNamePattern().IsMatch(source))
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(source, paramName);
-
-            // Check if source is valid environment variable name if source type is environment.
-            if (sourceType is SourceType.Environment && !EnvironmentVariableNamePattern().IsMatch(source))
-            {
-                throw new ArgumentException(
-                    "The environment variable name must start with a letter or underscore and contain only letters, numbers, and underscores.",
-                    paramName);
-            }
-
-            // Check if source is valid file URI if source type is file.
-            if (sourceType is SourceType.File
-                && (!Uri.TryCreate(source, UriKind.Absolute, out var _) || Uri.TryCreate(source, UriKind.Absolute, out var uri) && !uri.IsFile))
-            {
-                throw new ArgumentException("The source path must be a valid file URI.", paramName);
-            }
+            throw new ArgumentException(
+                "The environment variable name must start with a letter or underscore and contain only letters, numbers, and underscores.",
+                paramName);
         }
-        catch (Exception ex)
+
+        // Check if source is valid file URI if source type is file.
+        if (sourceType is SourceType.File
+            && (!Uri.TryCreate(source, UriKind.Absolute, out var _) || Uri.TryCreate(source, UriKind.Absolute, out var uri) && !uri.IsFile))
         {
-            throw new InvalidOperationException($"Validation failed for source '{source}' with source type '{sourceType}'.", ex);
+            throw new ArgumentException("The source path must be a valid file URI.", paramName);
         }
     }
 

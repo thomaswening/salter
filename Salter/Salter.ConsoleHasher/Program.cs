@@ -1,73 +1,98 @@
-﻿using System.Text;
-
-using Salter.Core;
+﻿using Salter.Core;
 
 namespace Salter.ConsoleHasher;
 
 internal class Program
-{
+{    
     static void Main(string[] args)
     {
         var passwordHasher = new PasswordHasher();
+        var continueHashing = true;
 
-        while (true)
+        while (continueHashing)
         {
+            Console.Write("Enter a password: ");
+            var password = ReadPassword();
+
+            if (password.Length == 0)
+            {
+                Console.WriteLine("Password cannot be empty. Please try again.");
+                continue;
+            }
+
+            var hash = string.Empty;
+            var salt = string.Empty;
+
             try
             {
-                Console.Write("Enter a password: ");
-                var password = ReadPassword();
-
-                if (string.IsNullOrWhiteSpace(password))
-                {
-                    Console.WriteLine("Password cannot be empty. Please try again.");
-                    continue;
-                }
-
-                var hash = passwordHasher.GenerateHash(password, out var salt);
-
-                Console.WriteLine($"Generated Hash: {hash}");
-                Console.WriteLine($"Generated Salt: {salt}");
-
-                Console.Write("Do you want to hash another password? (y/n): ");
-                var response = Console.ReadLine()?.Trim().ToLower();
-
-                if (response != "y")
-                {
-                    break;
-                }
+                hash = passwordHasher.GenerateHash(password, out salt);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
+                continue;
             }
+            finally
+            {
+                // Make sure password is cleared even if an exception occurs
+                Array.Clear(password, 0, password.Length);
+            }
+
+            Console.WriteLine($"Generated Hash: {hash}");
+            Console.WriteLine($"Generated Salt: {salt}");
+
+            continueHashing = AskToContinue();
         }
     }
-
-    private static string ReadPassword()
+    private static bool AskToContinue()
     {
-        var password = new StringBuilder();
+        Console.Write("Do you want to hash another password? (y/n): ");
+        var response = Console.ReadLine()?.Trim().ToLowerInvariant() ?? string.Empty;
+        return response == "y";
+    }
+
+    private static char[] ReadPassword()
+    {
+        var password = new List<char>();
+
         while (true)
         {
             var key = Console.ReadKey(intercept: true);
+
             if (key.Key == ConsoleKey.Enter)
             {
                 Console.WriteLine();
                 break;
             }
-            else if (key.Key == ConsoleKey.Backspace)
+
+            if (key.Key == ConsoleKey.Backspace && password.Count > 0)
             {
-                if (password.Length > 0)
-                {
-                    password.Remove(password.Length - 1, 1);
-                    Console.Write("\b \b");
-                }
+                password.RemoveAt(password.Count - 1);
+                Console.Write("\b \b");
+                continue;
             }
-            else
-            {
-                password.Append(key.KeyChar);
-                Console.Write("*");
-            }
+
+            password.Add(key.KeyChar);
+            Console.Write("*");
         }
-        return password.ToString();
+
+        var passwordArray = password.ToArray();
+        SecureClear(password);
+
+        return passwordArray;
+    }
+
+    private static void SecureClear(List<char> list)
+    {
+        // First overwrite each item in the list with null characters
+        // because clearing only removes the references to the items from memory
+        // but not the items themselves
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            list[i] = '\0';
+        }
+
+        list.Clear();
     }
 }
