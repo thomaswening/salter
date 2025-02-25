@@ -72,6 +72,12 @@ internal class Program
                 continue;
             }
 
+            if (key.Key == ConsoleKey.Backspace)
+            {
+                // Password is empty, so do nothing
+                continue;
+            }
+
             password.Add(key.KeyChar);
             Console.Write("*");
         }
