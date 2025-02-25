@@ -2,6 +2,10 @@
 
 **Salter** is a console-based application designed to explore and practice core security concepts in .NET, including user management, encryption, hashing, salting, and password storage. The project serves as a learning tool for secure authentication and authorization mechanisms.
 
+# Features
+
+- **Password Hasher**: Console utility to create a hash and salt, given user-provided password.
+
 ## Planned Features
 
 - **User Management**: Create, delete, and manage users.
