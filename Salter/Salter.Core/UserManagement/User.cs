@@ -43,6 +43,12 @@ public class User : Entity
         IsDefault = isDefault;
     }
 
+    /// <summary>
+    /// Meant for creating a user object from one that is persisted in the database.
+    /// </summary>
+    public User(Guid id, string username, string passwordHash, string salt, Role role)
+        : this(id, username, passwordHash, salt, role, false) { }
+
     public User(string username, string passwordHash, string salt, Role? role = null)
         : this(Guid.NewGuid(), username, passwordHash, salt, role ?? Role.User)
     {
