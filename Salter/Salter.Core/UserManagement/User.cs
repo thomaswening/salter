@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Salter.Core.DataManagement;
+﻿using Salter.Core.DataManagement;
 
 namespace Salter.Core.UserManagement;
 
@@ -18,18 +11,23 @@ namespace Salter.Core.UserManagement;
 public class User : Entity
 {
     public const string DefaultUsername = "default";
-    public const string DefaultPasswordHash = "0E443E662DB39E6780D3CD335AD8E93FD756BAEB667137281319D367DE723038951090B77CD6D8DB7361033B0481EBDA5FDD4CFDD1D69EC83EBE9525DBECB2FF";
-    public const string DefaultSalt = "909629B522964BCB0A76BB53E6D183C749225E54EF785BD39300C7A912E47C4821A85294A5455372B75EEA2B9FC0662735250CCDFAC1B4F510828C0E3AC95706";
+    private const string DefaultPasswordHash = "0E443E662DB39E6780D3CD335AD8E93FD756BAEB667137281319D367DE723038951090B77CD6D8DB7361033B0481EBDA5FDD4CFDD1D69EC83EBE9525DBECB2FF";
+    private const string DefaultSalt = "909629B522964BCB0A76BB53E6D183C749225E54EF785BD39300C7A912E47C4821A85294A5455372B75EEA2B9FC0662735250CCDFAC1B4F510828C0E3AC95706";
 
-    public static readonly User DefaultUser = CreateDefaultUser();
+    /// <summary>
+    /// Meant for creating a new user account that is not persisted in the database.
+    /// If no role is provided, the user is assigned the role of <see cref="Role.User"/>.
+    /// </summary>
+    public User(string username, string passwordHash, string salt, Role? role = null)
+        : this(Guid.NewGuid(), username, passwordHash, salt, role ?? Role.User, false) { }
 
-    public string Username { get; }
-    public string PasswordHash { get; }
-    public string Salt { get; }
-    public bool IsDefault { get; init; }
-    public Role Role { get; }
+    /// <summary>
+    /// Meant for creating a user object from one that is persisted in the database.
+    /// </summary>
+    public User(Guid id, string username, string passwordHash, string salt, Role role)
+        : this(id, username, passwordHash, salt, role, false) { }
 
-    private User(Guid id, string username, string passwordHash, string salt, Role role, bool isDefault = false)
+    private User(Guid id, string username, string passwordHash, string salt, Role role, bool isDefault)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
         ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash, nameof(passwordHash));
@@ -43,21 +41,11 @@ public class User : Entity
         IsDefault = isDefault;
     }
 
-    /// <summary>
-    /// Meant for creating a user object from one that is persisted in the database.
-    /// </summary>
-    public User(Guid id, string username, string passwordHash, string salt, Role role)
-        : this(id, username, passwordHash, salt, role, false) { }
-
-    public User(string username, string passwordHash, string salt, Role? role = null)
-        : this(Guid.NewGuid(), username, passwordHash, salt, role ?? Role.User)
-    {
-    }
-
-    private static User CreateDefaultUser()
-    {
-        return new User(Guid.NewGuid(), DefaultUsername, DefaultPasswordHash, DefaultSalt, Role.Admin, true);
-    }
+    public bool IsDefault { get; init; }
+    public string PasswordHash { get; }
+    public Role Role { get; }
+    public string Salt { get; }
+    public string Username { get; }
 
     /// <summary>
     /// This method is meant to create a user object for the default user account from the database.
@@ -69,6 +57,18 @@ public class User : Entity
     }
 
     /// <summary>
+    /// This method is meant to create a user object for the default user account from scratch.
+    /// This account is assigned the role of <see cref="Role.Admin"/> and the username <see cref="DefaultUsername"/>,
+    /// as well as the default password hash and salt.
+    /// </summary>
+    public static User CreateDefaultUser()
+    {
+        return CreateDefaultUser(Guid.NewGuid(), DefaultPasswordHash, DefaultSalt);
+    }
+
+    public bool HasRole(Role role) => Role.Equals(role);
+
+    /// <summary>
     /// Creates a copy of the user with the new role.
     /// </summary>
     /// <param name="newRole"></param>
@@ -77,6 +77,4 @@ public class User : Entity
     {
         return new User(Id, Username, PasswordHash, Salt, newRole, IsDefault);
     }
-
-    public bool HasRole(Role role) => Role.Equals(role);
 }
