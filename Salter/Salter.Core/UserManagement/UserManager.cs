@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Salter.Core;
-using Salter.Core.DataManagement;
+﻿using Salter.Core.DataManagement;
 
 namespace Salter.Core.UserManagement;
 
@@ -97,7 +90,7 @@ internal class UserManager(IRepository<User> repository, PasswordHasher password
     internal async Task ResetToDefaultAsync()
     {
         await repo.ClearAllRecordsAsync().ConfigureAwait(false);
-        await repo.AddRecordAsync(User.DefaultUser).ConfigureAwait(false);
+        await repo.AddRecordAsync(User.CreateDefaultUser()).ConfigureAwait(false);
     }
 
     internal async Task InitializeAsync()
@@ -118,7 +111,8 @@ internal class UserManager(IRepository<User> repository, PasswordHasher password
         var defaultUsers = repo.Cache.Where(users => users.IsDefault).ToList();
         if (defaultUsers.Count == 0)
         {
-            await repo.AddRecordAsync(User.DefaultUser).ConfigureAwait(false);
+            var newDefaultUser = User.CreateDefaultUser();
+            await repo.AddRecordAsync(newDefaultUser).ConfigureAwait(false);
         }
         else if (defaultUsers.Count > 1)
         {

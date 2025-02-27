@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Salter.Core.DataManagement;
+﻿namespace Salter.Core.DataManagement;
 
 /// <summary>
 /// Defines a repository interface for managing records of type <typeparamref name="T"/>.
