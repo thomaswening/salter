@@ -69,6 +69,10 @@ internal class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> al
         {
             throw new CryptographicException("Encryption failed.", ex);
         }
+        finally
+        {
+            Array.Clear(data, 0, data.Length);
+        }
     }
 
     public async Task<byte[]> EncryptAsync(byte[] data)
@@ -90,6 +94,10 @@ internal class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> al
         catch (Exception ex)
         {
             throw new CryptographicException("Encryption failed.", ex);
+        }
+        finally
+        {
+            Array.Clear(data, 0, data.Length);
         }
     }
 
