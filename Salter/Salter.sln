@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salter.ConsoleHasher", "Sal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salter.Core", "Salter.Core\Salter.Core.csproj", "{958A9530-C04E-4771-9036-48974666B97A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salter.Persistence", "Salter.Persistence\Salter.Persistence.csproj", "{990F3D02-1C15-4A57-9BA9-F167D070483F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{958A9530-C04E-4771-9036-48974666B97A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{958A9530-C04E-4771-9036-48974666B97A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{958A9530-C04E-4771-9036-48974666B97A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{990F3D02-1C15-4A57-9BA9-F167D070483F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{990F3D02-1C15-4A57-9BA9-F167D070483F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{990F3D02-1C15-4A57-9BA9-F167D070483F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{990F3D02-1C15-4A57-9BA9-F167D070483F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
