@@ -43,6 +43,12 @@ public class User : Entity
         IsDefault = isDefault;
     }
 
+    /// <summary>
+    /// Meant for creating a user object from one that is persisted in the database.
+    /// </summary>
+    public User(Guid id, string username, string passwordHash, string salt, Role role)
+        : this(id, username, passwordHash, salt, role, false) { }
+
     public User(string username, string passwordHash, string salt, Role? role = null)
         : this(Guid.NewGuid(), username, passwordHash, salt, role ?? Role.User)
     {
@@ -51,6 +57,15 @@ public class User : Entity
     private static User CreateDefaultUser()
     {
         return new User(Guid.NewGuid(), DefaultUsername, DefaultPasswordHash, DefaultSalt, Role.Admin, true);
+    }
+
+    /// <summary>
+    /// This method is meant to create a user object for the default user account from the database.
+    /// This account is assigned the role of <see cref="Role.Admin"/> and the username <see cref="DefaultUsername"/>.
+    /// </summary>
+    public static User CreateDefaultUser(Guid id, string passwordHash, string salt)
+    {
+        return new User(id, DefaultUsername, passwordHash, salt, Role.Admin, true);
     }
 
     /// <summary>

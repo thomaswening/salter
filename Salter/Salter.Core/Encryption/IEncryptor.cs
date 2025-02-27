@@ -1,6 +1,6 @@
 ﻿namespace Salter.Core.Encryption;
 
-internal interface IEncryptor
+public interface IEncryptor
 {
     byte[] Decrypt(byte[] data);
     Task<byte[]> DecryptAsync(byte[] data);
