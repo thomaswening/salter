@@ -54,6 +54,15 @@ public class User : Entity
     }
 
     /// <summary>
+    /// This method is meant to create a user object for the default user account from the database.
+    /// This account is assigned the role of <see cref="Role.Admin"/> and the username <see cref="DefaultUsername"/>.
+    /// </summary>
+    public static User CreateDefaultUser(Guid id, string passwordHash, string salt)
+    {
+        return new User(id, DefaultUsername, passwordHash, salt, Role.Admin, true);
+    }
+
+    /// <summary>
     /// Creates a copy of the user with the new role.
     /// </summary>
     /// <param name="newRole"></param>
