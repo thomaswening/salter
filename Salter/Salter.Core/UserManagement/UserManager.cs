@@ -5,7 +5,7 @@ namespace Salter.Core.UserManagement;
 /// <summary>
 /// Manages the creation, retrieval, updating, and deletion of user accounts.
 /// </summary>
-internal class UserManager(IRepository<User> repository, PasswordHasher passwordHasher)
+public class UserManager(IRepository<User> repository, PasswordHasher passwordHasher)
 {
     private const string UserDoesNotExistMessage = "User does not exist";
     private const string UserAlreadyExistsMessage = "User already exists";
@@ -87,13 +87,13 @@ internal class UserManager(IRepository<User> repository, PasswordHasher password
         return repo.Cache.FirstOrDefault(u => u.Equals(user));
     }
 
-    internal async Task ResetToDefaultAsync()
+    public async Task ResetToDefaultAsync()
     {
         await repo.ClearAllRecordsAsync().ConfigureAwait(false);
         await repo.AddRecordAsync(User.CreateDefaultUser()).ConfigureAwait(false);
     }
 
-    internal async Task InitializeAsync()
+    public async Task InitializeAsync()
     {
         try
         {

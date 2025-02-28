@@ -6,7 +6,7 @@ namespace Salter.Encryption;
 /// The <see cref="SecretManager"/> class provides an abstract base for managing secrets from different sources.
 /// It supports loading and saving secrets from environment variables and files.
 /// </summary>
-internal abstract partial class SecretManager(SecretManager.SourceType sourceType)
+public abstract partial class SecretManager(SecretManager.SourceType sourceType)
 {
     // The pattern for a valid environment variable name.
     // - Must start with a letter or underscore.

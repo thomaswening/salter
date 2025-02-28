@@ -7,7 +7,7 @@ namespace Salter.Persistence;
 /// </summary>
 /// <typeparam name="TModel">The type of the model.</typeparam>
 /// <typeparam name="TDto">The type of the data transfer object.</typeparam>
-internal abstract class Mapper<TModel, TDto>
+public abstract class Mapper<TModel, TDto>
     where TDto : IDataTransferObject<TModel>
     where TModel : Entity
 {

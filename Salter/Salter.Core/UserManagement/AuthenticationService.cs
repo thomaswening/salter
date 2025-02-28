@@ -2,7 +2,7 @@
 
 namespace Salter.Core.UserManagement;
 
-internal partial class AuthenticationService(UserManager userManager, PasswordHasher passwordHasher)
+public partial class AuthenticationService(UserManager userManager, PasswordHasher passwordHasher)
 {
     private const string NoCurrentUserMessage = "No user is currently authenticated.";
     private readonly UserManager userManager = userManager;

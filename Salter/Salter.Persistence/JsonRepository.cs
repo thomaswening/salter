@@ -14,7 +14,7 @@ namespace Salter.Persistence;
 /// </summary>
 /// <typeparam name="T">The type of the records managed by the repository. Must be a non-nullable type and inherit from <see cref="Entity"/>.</typeparam>
 /// <typeparam name="TDto">The type of the DTO used for deserialization. Must implement <see cref="IDataTransferObject{T}"/>.</typeparam>
-internal class JsonRepository<T, TDto> : Repository<T>
+public class JsonRepository<T, TDto> : Repository<T>
     where T : notnull, Entity
     where TDto : IDataTransferObject<T>
 {
