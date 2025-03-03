@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Salter.Cmd.Menus;
+﻿namespace Salter.Cmd.Menus;
 internal class MenuDisplay
 {
     private const string ExitKey = "X";

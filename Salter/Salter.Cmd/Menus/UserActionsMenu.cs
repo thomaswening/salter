@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Salter.Core.UserManagement;
-using Salter.Core;
+﻿using Salter.Core.UserManagement;
 
 namespace Salter.Cmd.Menus;
 
@@ -123,7 +116,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
 
     private static char[] PromptForNewPassword()
     {
-        char[] newPassword = Array.Empty<char>();
+        char[] newPassword = [];
 
         while (true)
         {

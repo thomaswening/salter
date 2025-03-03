@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Salter.Cmd.Menus;
-
-namespace Salter.Cmd.Menus;
+﻿namespace Salter.Cmd.Menus;
 internal class MenuNavigator
 {
     private readonly Stack<Menu> _menuStack = new();

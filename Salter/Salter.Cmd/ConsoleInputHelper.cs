@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Salter.Cmd;
+﻿namespace Salter.Cmd;
 
 internal static class ConsoleInputHelper
 {
