@@ -89,7 +89,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
             return;
         }
 
-        var newPassword = PromptForNewPassword();
+        var newPassword = PromptForNewPassword("Please enter a new password");
         var hash = _authService.Hasher.GenerateHash(newPassword, out var salt);
         var changedUser = new User(
             _authService.CurrentUser.Id,
@@ -114,14 +114,14 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
         Console.WriteLine("You have successfully changed your password.");
     }
 
-    private static char[] PromptForNewPassword()
+    private static char[] PromptForNewPassword(string promptMsg)
     {
         char[] newPassword = [];
 
         while (true)
         {
             if (!ConsoleInputHelper.GetSecretUserInput(
-                "Enter a new password",
+                promptMsg,
                 AuthenticationService.ValidatePassword,
                 out newPassword,
                 "Your password does not meet the requirements. Please try again."))
@@ -129,7 +129,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
                 continue;
             }
 
-            if (!ConsoleInputHelper.GetSecretUserInput("Please confirm your new password", out var confirmPassword))
+            if (!ConsoleInputHelper.GetSecretUserInput("Please confirm the password", out var confirmPassword))
             {
                 continue;
             }
@@ -231,7 +231,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
             return;
         }
 
-        var password = PromptForNewPassword();
+        var password = PromptForNewPassword("Please enter a password");
 
         try
         {
@@ -376,7 +376,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
             throw new InvalidOperationException("Cannot authenticate current user because no user is currently logged in.");
         }
 
-        Console.WriteLine("Please enter your current password to proceed.");
+        Console.WriteLine("Please authenticate with your password to proceed.");
 
         var isAuthenticated = false;
 
