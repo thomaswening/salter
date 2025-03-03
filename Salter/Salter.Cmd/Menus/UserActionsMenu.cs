@@ -64,11 +64,13 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
 
         try
         {
-            await userManager.UpdateUserAsync(changedUser);
-            await _authService.RefreshCurrentUserAsync();
+            await userManager.UpdateUserAsync(changedUser).ConfigureAwait(false);
+            await _authService.RefreshCurrentUserAsync().ConfigureAwait(false);
         }
         catch (Exception e)
         {
+            _canProceedToSubMenu = false;
+
             Console.WriteLine("Could not change username. Please try again.");
             Console.WriteLine(e.Message);
             Console.WriteLine();
@@ -169,7 +171,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
             return;
         }
 
-        if (!await AuthenticateCurrentUserAsync())
+        if (!await AuthenticateCurrentUserAsync().ConfigureAwait(false))
         {
             Console.WriteLine("Could not authenticate user. Deleting account failed.");
             Console.WriteLine();
@@ -203,7 +205,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
     {
         try
         {
-            var users = await userManager.GetUsersAsync();
+            var users = await userManager.GetUsersAsync().ConfigureAwait(false);
             Console.WriteLine("-- Registered users --");
             Console.WriteLine();
 
@@ -216,6 +218,8 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
         }
         catch (Exception e)
         {
+            _canProceedToSubMenu = false;
+
             Console.WriteLine("Could not retrieve users. Please try again.");
             Console.WriteLine(e.Message);
             Console.WriteLine();
@@ -249,6 +253,8 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
         }
         catch (Exception e)
         {
+            _canProceedToSubMenu = false;
+
             Console.WriteLine("Could not create user. Please try again.");
             Console.WriteLine(e.Message);
             Console.WriteLine();
@@ -299,6 +305,8 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
         }
         catch (Exception e)
         {
+            _canProceedToSubMenu = false;
+
             Console.WriteLine("Could not delete user. Please try again.");
             Console.WriteLine(e.Message);
             Console.WriteLine();
@@ -350,6 +358,8 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
         }
         catch (Exception e)
         {
+            _canProceedToSubMenu = false;
+
             Console.WriteLine("Could not make user admin. Please try again.");
             Console.WriteLine(e.Message);
             Console.WriteLine();

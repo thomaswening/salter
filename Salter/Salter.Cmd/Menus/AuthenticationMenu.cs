@@ -52,9 +52,10 @@ internal class AuthenticationMenu : Menu
         }
         catch (Exception e)
         {
+            _canProceedToSubMenu = false;
+
             Console.WriteLine("Could not register user. Please try again.");
             Console.WriteLine(e.Message);
-            ConsoleInputHelper.PromptContinue();
             return;
         }
 
@@ -94,7 +95,8 @@ internal class AuthenticationMenu : Menu
 
             try
             {
-                isAuthenticated = await _authService.AuthenticateAsync(username, password);
+                isAuthenticated = await _authService.AuthenticateAsync(username, password).ConfigureAwait(false);
+
                 if (!isAuthenticated)
                 {
                     Console.WriteLine("Invalid credentials. Please try again.");
@@ -103,9 +105,10 @@ internal class AuthenticationMenu : Menu
             }
             catch (Exception e)
             {
+                _canProceedToSubMenu = false;
+
                 Console.WriteLine("Could not authenticate user. Please try again.");
                 Console.WriteLine(ExceptionHelper.UnpackException(e));
-                ConsoleInputHelper.PromptContinue();
                 return;
             }
         }
@@ -116,12 +119,12 @@ internal class AuthenticationMenu : Menu
 
     private async Task RegisterAndAuthenticateUserAsync()
     {
-        await RegisterNewUserAsync();
+        await RegisterNewUserAsync().ConfigureAwait(false);
 
         Console.WriteLine("Please login to continue.");
         Console.WriteLine();
 
-        await AuthenticateUserAsync();
+        await AuthenticateUserAsync().ConfigureAwait(false);
     }
 
     protected override List<MenuItem> CreateMenuItems()

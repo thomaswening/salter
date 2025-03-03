@@ -11,6 +11,7 @@ namespace Salter.Cmd.Menus;
 internal abstract class Menu(AuthenticationService authService)
 {
     protected readonly AuthenticationService _authService = authService;
+    protected bool _canProceedToSubMenu = true;
 
     public event EventHandler? ExitRequested;
     public event EventHandler? GoBackRequested;
@@ -67,8 +68,10 @@ internal abstract class Menu(AuthenticationService authService)
         GoBackRequested?.Invoke(this, EventArgs.Empty);
     }
 
-    public void ExecuteMenuItem(int displayIndex)
+    public async Task ExecuteMenuItemAsync(int displayIndex)
     {
+        _canProceedToSubMenu = true;
+
         var index = displayIndex - 1; // Adjust for 1-based display index
 
         if (index < 0 || index >= MenuItems.Count)
@@ -78,16 +81,28 @@ internal abstract class Menu(AuthenticationService authService)
 
         var selectedItem = MenuItems[index];
 
-        if (selectedItem.Action is not null)
+        try
         {
-            selectedItem.Action();
+            if (selectedItem.Action is not null)
+            {
+                selectedItem.Action();
+            }
+            else if (selectedItem.AsyncAction is not null)
+            {
+                await selectedItem.AsyncAction().ConfigureAwait(false);
+            }
         }
-        else if (selectedItem.AsyncAction is not null)
+        catch (Exception ex)
         {
-            selectedItem.AsyncAction().Wait();
+            Console.WriteLine("An unexpected error occurred.");
+            Console.WriteLine(ExceptionHelper.UnpackException(ex));
+            _canProceedToSubMenu = false;
+
+            // Do not navigate to sub-menu on error
+            return;
         }
 
-        if (selectedItem.SubMenu is not null)
+        if (_canProceedToSubMenu && selectedItem.SubMenu is not null)
         {
             RequestNavigationTo(selectedItem.SubMenu);
         }

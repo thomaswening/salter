@@ -16,6 +16,7 @@ internal class MenuDisplay
 
     private bool _isCurrentMenuChanged = false;
     private bool _isExitRequested = false;
+    private bool _isStartup = true;
 
     public MenuDisplay(MenuNavigator menuNavigator)
     {
@@ -24,12 +25,13 @@ internal class MenuDisplay
         _menuNavigator.ExitRequested += OnExitRequested;
     }
 
-    public void Start()
+    public async Task StartAsync()
     {
         var isExit = false;
         while (!isExit)
         {
-            _isCurrentMenuChanged = false;
+            _isCurrentMenuChanged = false;            
+
             DisplayCurrentMenu();
 
             Console.Write("\nChoose an option: ");
@@ -43,7 +45,7 @@ internal class MenuDisplay
                 continue;
             }
 
-            HandleUserInput(input, out isExit);
+            isExit = await HandleUserInputAsync(input).ConfigureAwait(false);
 
             if (!_isCurrentMenuChanged && !_isExitRequested)
             {
@@ -52,14 +54,34 @@ internal class MenuDisplay
         }
     }
 
+    private static void ShowWelcomeScreen()
+    {
+        Console.WriteLine(AppConstants.AppAsciiArt);
+        Console.WriteLine();
+    }
+
     private static string GetMenuItemText(string displayIndex, string title) => displayIndex + MenuItemSeparator + title;
 
     private void DisplayCurrentMenu()
     {
+        if (_isStartup)
+        {
+            ShowWelcomeScreen();
+        }
+
         var currentMenu = _menuNavigator.CurrentMenu;
         var displayTitle = $"{TitleSeparator} {currentMenu.Title} {TitleSeparator}";
 
-        Console.Clear();
+        if (!_isStartup)
+        {
+            Console.Clear();
+        }
+
+        if (_isStartup)
+        {
+            _isStartup = false;
+        }
+
         Console.WriteLine(displayTitle);
         Console.WriteLine();
 
@@ -82,28 +104,30 @@ internal class MenuDisplay
         Console.WriteLine(exitMenuItemText);
     }
 
-    private void HandleUserInput(string input, out bool isExit)
+    /// <summary>
+    /// Handles the user input and returns a boolean indicating if the application should exit.
+    /// </summary>
+    private async Task<bool> HandleUserInputAsync(string input)
     {
-        isExit = false;
-
         var currentMenu = _menuNavigator.CurrentMenu;
 
         if (input.Equals(ExitKey, StringComparison.OrdinalIgnoreCase))
         {
             currentMenu.Exit();
-            isExit = true;
-            return;
+            return true;
         }
 
         if (input.Equals(GoBackKey, StringComparison.OrdinalIgnoreCase))
         {
             currentMenu.NavigateToPreviousMenu();
-            return;
+            return true;
         }
 
         // This is safe because we've already validated the input
         var displayIndex = int.Parse(input);
-        currentMenu.ExecuteMenuItem(displayIndex);
+        await currentMenu.ExecuteMenuItemAsync(displayIndex).ConfigureAwait(false);
+
+        return false;
     }
 
     private bool IsValidUserInput(string input)

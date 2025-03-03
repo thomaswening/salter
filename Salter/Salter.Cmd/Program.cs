@@ -25,7 +25,7 @@ internal class Program
             var menuNavigator = new MenuNavigator(mainMenu);
             var menuDisplay = new MenuDisplay(menuNavigator);
 
-            menuDisplay.Start();
+            await menuDisplay.StartAsync().ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {

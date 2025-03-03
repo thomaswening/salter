@@ -219,6 +219,7 @@ internal static class ConsoleInputHelper
     internal static void PromptContinue()
     {
         Console.WriteLine("Press any key to continue...");
+        Console.WriteLine();
         Console.ReadKey(true);
     }
 
