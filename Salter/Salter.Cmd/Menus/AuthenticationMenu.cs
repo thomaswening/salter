@@ -24,7 +24,7 @@ internal class AuthenticationMenu : Menu
             out var username,
             "Please enter your username"))
         {
-            ConsoleInputHelper.PromptContinue();
+            _canProceedToSubMenu = false;
             return;
         }
 
@@ -34,7 +34,7 @@ internal class AuthenticationMenu : Menu
             out var password,
             "Please enter your password"))
         {
-            ConsoleInputHelper.PromptContinue();
+            _canProceedToSubMenu = false;
             return;
         }
 
@@ -71,7 +71,7 @@ internal class AuthenticationMenu : Menu
                 out var username,
                 "Please enter your username"))
             {
-                ConsoleInputHelper.PromptContinue();
+                _canProceedToSubMenu = false;
                 return;
             }
 
@@ -81,7 +81,7 @@ internal class AuthenticationMenu : Menu
                 out var password,
                 "Please enter your password"))
             {
-                ConsoleInputHelper.PromptContinue();
+                _canProceedToSubMenu = false;
                 return;
             }
 
@@ -114,6 +114,11 @@ internal class AuthenticationMenu : Menu
     private async Task RegisterAndAuthenticateUserAsync()
     {
         await RegisterNewUserAsync().ConfigureAwait(false);
+
+        if (!_canProceedToSubMenu)
+        {
+            return;
+        }
 
         Console.WriteLine("Please login to continue.");
         Console.WriteLine();

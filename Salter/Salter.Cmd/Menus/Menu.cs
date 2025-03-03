@@ -54,12 +54,14 @@ internal abstract class Menu(AuthenticationService authService)
     {
         OnExit();
         ExitRequested?.Invoke(this, EventArgs.Empty);
+        DetachEvents();
     }
 
     public void NavigateToPreviousMenu()
     {
         OnGoBack();
         GoBackRequested?.Invoke(this, EventArgs.Empty);
+        DetachEvents();
     }
 
     public async Task ExecuteMenuItemAsync(int displayIndex)
@@ -112,7 +114,19 @@ internal abstract class Menu(AuthenticationService authService)
     /// </summary>
     protected abstract void OnGoBack();
 
-    protected void RequestNavigationTo(Menu menu) => NavigationRequested?.Invoke(this, menu);
+    protected void RequestNavigationTo(Menu menu)
+    {
+        NavigationRequested?.Invoke(this, menu);
+        DetachEvents();
+    }
+
+    private void DetachEvents()
+    {
+        ExitRequested = null;
+        GoBackRequested = null;
+        NavigationRequested = null;
+        ReturnToRootRequested = null;
+    }
 }
 
 internal class NavigationRequest(Menu menu) : EventArgs

@@ -5,7 +5,7 @@ internal class MenuNavigator
     public MenuNavigator(Menu rootMenu)
     {
         _menuStack.Push(rootMenu);
-        SubscribeToMenuEvents();
+        AttachCurrentMenuEvents();
     }
 
     public event EventHandler? ExitRequested;
@@ -15,29 +15,22 @@ internal class MenuNavigator
 
     private void OnGoBackRequested(object? sender, EventArgs e)
     {
-        UnsubscribeFromMenuEvents();
         _menuStack.Pop();
+        AttachCurrentMenuEvents();
         MenuChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnNavigationRequested(object? sender, Menu requestedMenu)
     {
         _menuStack.Push(requestedMenu);
-        SubscribeToMenuEvents();
+        AttachCurrentMenuEvents();
         MenuChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    private void SubscribeToMenuEvents()
+    private void AttachCurrentMenuEvents()
     {
         CurrentMenu.GoBackRequested += OnGoBackRequested;
         CurrentMenu.ExitRequested += (sender, e) => ExitRequested?.Invoke(sender, e);
         CurrentMenu.NavigationRequested += OnNavigationRequested;
-    }
-
-    private void UnsubscribeFromMenuEvents()
-    {
-        CurrentMenu.GoBackRequested -= OnGoBackRequested;
-        CurrentMenu.ExitRequested -= (sender, e) => ExitRequested?.Invoke(sender, e);
-        CurrentMenu.NavigationRequested -= OnNavigationRequested;
     }
 }
