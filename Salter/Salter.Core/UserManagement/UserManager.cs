@@ -112,6 +112,7 @@ public class UserManager(IRepository<User> repository, PasswordHasher passwordHa
         if (defaultUsers.Count == 0)
         {
             var newDefaultUser = User.CreateDefaultUser();
+            defaultUsers.Add(newDefaultUser);
             await repo.AddRecordAsync(newDefaultUser).ConfigureAwait(false);
         }
         else if (defaultUsers.Count > 1)
