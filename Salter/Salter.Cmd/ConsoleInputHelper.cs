@@ -210,9 +210,16 @@ internal static class ConsoleInputHelper
         return true;
     }
 
-    internal static void PromptContinue()
+    internal static void PromptContinue(string? prompt = null)
     {
-        Console.WriteLine("Press any key to continue...");
+        if (!string.IsNullOrEmpty(prompt))
+        {
+            Console.WriteLine(prompt);
+        }
+        else
+        {
+            Console.WriteLine("Press any key to continue...");
+        }
         Console.WriteLine();
         Console.ReadKey(true);
     }

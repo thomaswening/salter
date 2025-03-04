@@ -447,6 +447,70 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
         Exit();
     }
 
+    private async Task UninstallApplicationAsync()
+    {
+        if (_authService.CurrentUser is null)
+        {
+            Console.WriteLine("You must be logged in to uninstall the application.");
+            Console.WriteLine();
+            return;
+        }
+        if (!_authService.CurrentUser.IsDefault)
+        {
+            Console.WriteLine("You must be logged in as the default user to uninstall the application.");
+            Console.WriteLine();
+            return;
+        }
+        if (!await AuthenticateCurrentUserAsync().ConfigureAwait(false))
+        {
+            Console.WriteLine("Could not authenticate user. Uninstalling the application failed.");
+            Console.WriteLine();
+            return;
+        }
+
+        if (!ConsoleInputHelper.GetUserConfirmation(
+            "!!! DANGER ZONE !!!\n\n" +
+            "Uninstalling the application cannot be undone!\n" +
+            "All registered users will be wiped from storage.\n\n" +
+            "Do you want to proceed anyway?"))
+        {
+            Console.WriteLine("User management removal cancelled.");
+            Console.WriteLine();
+            return;
+        }
+
+        Console.WriteLine();
+
+        await RemoveUserRepositoryAsync(userManager).ConfigureAwait(false);
+
+        bool isUninstalled;
+        try
+        {
+            isUninstalled = UninstallerUtility.RunUninstallProcess();
+        }
+        catch (Exception ex)
+        {
+            _canProceedToSubMenu = false;
+
+            Console.WriteLine("Could not uninstall the application.");
+            Console.WriteLine(ExceptionHelper.UnpackException(ex));
+            Console.WriteLine();
+            return;
+        }
+
+        if (!isUninstalled)
+        {
+            _canProceedToSubMenu = false;
+
+            Console.WriteLine("Could not uninstall the application.");
+            Console.WriteLine();
+            return;
+        }
+
+        Console.WriteLine();
+        Exit();
+    }
+
     private static async Task RemoveUserRepositoryAsync(UserManager userManager)
     {
         try
@@ -473,6 +537,8 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
             new("Create User", CreateUserAsync, Role.Admin),
             new("Delete User", DeleteUserAsync, Role.Admin),
             new("Make User Admin", MakeUserAdminAsync, Role.Admin),
+            new("Delete User Management", DeleteUserManagementAsync, u => u.IsDefault),
+            new("Uninstall Application", UninstallApplicationAsync, u => u.IsDefault),
             new("Logout", Logout)
         ];
     }
