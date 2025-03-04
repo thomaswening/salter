@@ -6,7 +6,7 @@ namespace Salter.Core.Encryption;
 /// The <see cref="KeyIvEncryptor"/> class provides methods for encrypting and decrypting data using symmetric encryption algorithms.
 /// It utilizes a <see cref="KeyManager"/> to manage encryption keys and initialization vectors.
 /// </summary>
-internal class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> algorithmFactory) : IEncryptor
+public class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> algorithmFactory) : IEncryptor
 {
     private readonly KeyManager keyManager = keyManager;
     private readonly Func<SymmetricAlgorithm> algorithmFactory = algorithmFactory;

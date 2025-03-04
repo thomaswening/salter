@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salter.Core", "Salter.Core\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salter.Persistence", "Salter.Persistence\Salter.Persistence.csproj", "{990F3D02-1C15-4A57-9BA9-F167D070483F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salter.Cmd", "Salter.Cmd\Salter.Cmd.csproj", "{06CC6CEF-3F48-4103-A182-48401D873F8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{990F3D02-1C15-4A57-9BA9-F167D070483F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{990F3D02-1C15-4A57-9BA9-F167D070483F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{990F3D02-1C15-4A57-9BA9-F167D070483F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06CC6CEF-3F48-4103-A182-48401D873F8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06CC6CEF-3F48-4103-A182-48401D873F8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06CC6CEF-3F48-4103-A182-48401D873F8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06CC6CEF-3F48-4103-A182-48401D873F8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

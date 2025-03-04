@@ -7,7 +7,7 @@ namespace Salter.Persistence;
 /// An abstract repository class that implements the cache logic for managing records of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of the records managed by the repository. Must be a non-nullable type and inherit from <see cref="Entity"/>.</typeparam>
-internal abstract class Repository<T> : IRepository<T> where T : notnull, Entity
+public abstract class Repository<T> : IRepository<T> where T : notnull, Entity
 {
     protected readonly Uri location;
     protected readonly IEncryptor encryptor;

@@ -2,7 +2,7 @@
 
 namespace Salter.Persistence;
 
-internal class UserMapper : Mapper<User, UserDto>
+public class UserMapper : Mapper<User, UserDto>
 {
     public override UserDto MapToDataTransferObject(User model)
     {

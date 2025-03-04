@@ -2,11 +2,10 @@
 
 namespace Salter.Core.UserManagement;
 
-internal partial class AuthenticationService(UserManager userManager, PasswordHasher passwordHasher)
+public partial class AuthenticationService(UserManager userManager, PasswordHasher passwordHasher)
 {
-    private const string NoCurrentUserMessage = "No user is currently authenticated.";
     private readonly UserManager userManager = userManager;
-    private readonly PasswordHasher passwordHasher = passwordHasher;
+    public PasswordHasher Hasher => passwordHasher;
 
     public User? CurrentUser { get; private set; }
 
@@ -22,7 +21,7 @@ internal partial class AuthenticationService(UserManager userManager, PasswordHa
                 return false;
             }
 
-            var isAuthenticated = passwordHasher.Validate(password, user.PasswordHash, user.Salt);
+            var isAuthenticated = Hasher.Validate(password, user.PasswordHash, user.Salt);
 
             if (isAuthenticated)
             {
@@ -30,6 +29,10 @@ internal partial class AuthenticationService(UserManager userManager, PasswordHa
             }
 
             return isAuthenticated;
+        }
+        catch (Exception e)
+        {
+            throw new AuthenticationServiceException("Could not authenticate user.", e);
         }
         finally
         {
@@ -41,7 +44,7 @@ internal partial class AuthenticationService(UserManager userManager, PasswordHa
     {
         if (CurrentUser is null)
         {
-            throw new InvalidOperationException(NoCurrentUserMessage);
+            throw new AuthenticationServiceException("Current user is null.");
         }
 
         try
@@ -58,8 +61,16 @@ internal partial class AuthenticationService(UserManager userManager, PasswordHa
     {
         try
         {
-            ValidateUsername(username);
-            ValidatePassword(password);
+            if (!ValidateUsername(username, out var usernameError))
+            {
+                throw new UsernameException(usernameError);
+            }
+
+            if (!ValidatePassword(password, out var passwordError))
+            {
+                throw new InvalidPasswordException(passwordError);
+            }
+
             await userManager.AddUserAsync(username, password);
         }
         finally
@@ -68,41 +79,67 @@ internal partial class AuthenticationService(UserManager userManager, PasswordHa
         }
     }
 
-    public static void ValidatePassword(char[] password)
+    public async Task RefreshCurrentUserAsync()
     {
-        if (password.Length < 8)
+        if (CurrentUser is null)
         {
-            throw new InvalidPasswordException("Password must be at least 8 characters long.");
+            throw new NoAuthenticatedUserException();
         }
 
-        // at least one uppercase letter, one lowercase letter, one number, special character
-        if (!PasswordRegex().IsMatch(password))
-        {
-            throw new InvalidPasswordException("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
-        }
+        var users = await userManager.GetUsersAsync();
+        CurrentUser = users.FirstOrDefault(u => u.Equals(CurrentUser));
     }
 
-    public void ValidateUsername(string username)
+    public static bool ValidatePassword(char[] password, out string errorMessage)
     {
+        errorMessage = string.Empty;
+
+        if (password.Length < 8)
+        {
+            errorMessage = "Password must be at least 8 characters long.";
+            return false;
+        }
+
+        if (!PasswordRegex().IsMatch(password))
+        {
+            errorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+            return false;
+        }
+
+        return true;
+    }
+
+    public void Logout() => CurrentUser = null;
+
+    public bool ValidateUsername(string username, out string errorMessage)
+    {
+        errorMessage = string.Empty;
+
         if (username.Length < 8 || username.Length > 20)
         {
-            throw new InvalidUsernameException("Username must be between 8 and 20 characters long.");
+            errorMessage = "Username must be between 8 and 20 characters long.";
+            return false;
         }
 
         if (!UsernameRegex().IsMatch(username))
         {
-            throw new InvalidUsernameException("Username must contain only letters, numbers, underscores, and dashes.");
+            errorMessage = "Username must contain only letters, numbers, underscores, and dashes.";
+            return false;
         }
 
         if (!char.IsLetter(username[0]))
         {
-            throw new InvalidUsernameException("Username must start with a letter.");
+            errorMessage = "Username must start with a letter.";
+            return false;
         }
 
         if (userManager.GetUserByUsername(username) is not null)
         {
-            throw new InvalidUsernameException("Username already exists.");
+            errorMessage = "Username already exists.";
+            return false;
         }
+
+        return true;
     }
 
     [GeneratedRegex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$")]
@@ -112,10 +149,18 @@ internal partial class AuthenticationService(UserManager userManager, PasswordHa
     private static partial Regex UsernameRegex();
 }
 
-public class InvalidPasswordException(string message) : Exception(message)
+public class AuthenticationServiceException(string message, Exception? innerException = null) : Exception(message, innerException)
 {
 }
 
-public class InvalidUsernameException(string message) : Exception(message)
+public class InvalidPasswordException(string message) : AuthenticationServiceException(message)
+{
+}
+
+public class UsernameException(string message) : AuthenticationServiceException(message)
+{
+}
+
+public class NoAuthenticatedUserException() : AuthenticationServiceException("No user is currently authenticated.")
 {
 }

@@ -5,7 +5,7 @@ using Salter.Core.UserManagement;
 
 namespace Salter.Persistence;
 
-internal class UserDto : DataTransferObject<User>
+public class UserDto : DataTransferObject<User>
 {
     public Guid Id { get; set; }
     public string Username { get; set; } = string.Empty;

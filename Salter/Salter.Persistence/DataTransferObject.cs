@@ -2,12 +2,12 @@
 
 namespace Salter.Persistence;
 
-internal interface IDataTransferObject<T> where T : Entity
+public interface IDataTransferObject<T> where T : Entity
 {
     ValidationException? Validate();
 }
 
-internal abstract class DataTransferObject<T> : IDataTransferObject<T> where T : Entity
+public abstract class DataTransferObject<T> : IDataTransferObject<T> where T : Entity
 {
     public abstract ValidationException? Validate();
 }

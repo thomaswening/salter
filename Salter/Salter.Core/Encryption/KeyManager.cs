@@ -6,11 +6,17 @@ namespace Salter.Core.Encryption;
 /// The <see cref="KeyManager"/> class extends the <see cref="SecretManager"/> class to manage encryption keys and initialization vectors.
 /// It supports loading and saving keys and initialization vectors from environment variables and files.
 /// </summary>
-internal class KeyManager : SecretManager
+public class KeyManager : SecretManager
 {
     public class Options
     {
         public SourceType SourceType { get; set; }
+
+        /// <summary>
+        /// The source of the encryption key: 
+        /// For <see cref="SourceType.Environment"/>, the environment variable name.
+        /// For <see cref="SourceType.File"/>, the local file path.
+        /// </summary>
         public string KeySource { get; set; } = string.Empty;
         public string InitializationVectorSource { get; set; } = string.Empty;
     }
