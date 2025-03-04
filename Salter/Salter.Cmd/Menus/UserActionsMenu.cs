@@ -17,7 +17,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
 
     private async Task ChangeCurrentUsernameAsync()
     {
-        if (_authService.CurrentUser is null)
+        if (_authService.CurrentUser == User.NoUser)
         {
             Console.WriteLine("\nYou must be logged in to change your username.");
             return;
@@ -75,7 +75,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
 
     private async Task ChangeCurrentPasswordAsync()
     {
-        if (_authService.CurrentUser is null)
+        if (_authService.CurrentUser == User.NoUser)
         {
             Console.WriteLine("You must be logged in to change your password.");
             Console.WriteLine();
@@ -151,7 +151,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
     {
         Console.WriteLine();
 
-        if (_authService.CurrentUser is null)
+        if (_authService.CurrentUser == User.NoUser)
         {
             Console.WriteLine("You must be logged in to delete your account.");
             Console.WriteLine();
@@ -283,6 +283,12 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
             return;
         }
 
+        if (_authService.CurrentUser.Equals(user))
+        {
+            await DeleteCurrentUserAsync().ConfigureAwait(false);
+            return;
+        }
+
         Console.WriteLine();
 
         try
@@ -371,7 +377,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
 
     private async Task<bool> AuthenticateCurrentUserAsync()
     {
-        if (_authService.CurrentUser is null)
+        if (_authService.CurrentUser == User.NoUser)
         {
             throw new InvalidOperationException("Cannot authenticate current user because no user is currently logged in.");
         }
@@ -404,7 +410,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
 
     private async Task DeleteUserManagementAsync()
     {
-        if (_authService.CurrentUser is null)
+        if (_authService.CurrentUser == User.NoUser)
         {
             Console.WriteLine("You must be logged in to remove the user management.");
             Console.WriteLine();
@@ -449,7 +455,7 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
 
     private async Task UninstallApplicationAsync()
     {
-        if (_authService.CurrentUser is null)
+        if (_authService.CurrentUser == User.NoUser)
         {
             Console.WriteLine("You must be logged in to uninstall the application.");
             Console.WriteLine();
