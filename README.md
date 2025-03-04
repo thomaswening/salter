@@ -11,9 +11,6 @@
 - **Encryption & Security**:
   - Passwords are stored using salted, hashed values.
   - User repository itself is encrypted.
-    
-## Planned Features
-
 - **Authorization**: Role-based permission system.
 - **Console-Based Interface**: Simple CLI for managing users and permissions.
 
