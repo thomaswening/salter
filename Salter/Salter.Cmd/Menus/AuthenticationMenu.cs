@@ -126,12 +126,30 @@ internal class AuthenticationMenu : Menu
         await AuthenticateUserAsync().ConfigureAwait(false);
     }
 
+    private void CreatePasswordHash()
+    {
+        if (!ConsoleInputHelper.GetSecretUserInput("Password", out var password))
+        {
+            return;
+        }
+
+        Console.WriteLine();
+
+        var hash = _authService.Hasher.GenerateHash(password, out var salt);
+        Array.Clear(password, 0, password.Length);
+
+        Console.WriteLine($"Password hash: {hash}");
+        Console.WriteLine($"Salt:          {salt}");
+        Console.WriteLine();
+    }
+
     protected override List<MenuItem> CreateMenuItems()
     {
         return
         [
             new("Authenticate", AuthenticateUserAsync, subMenu: _userActionsMenu),
             new("Register", RegisterAndAuthenticateUserAsync, subMenu: _userActionsMenu),
+            new("Create password hash", CreatePasswordHash),
         ];
     }
 
