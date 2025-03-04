@@ -402,6 +402,66 @@ internal class UserActionsMenu(AuthenticationService authService, UserManager us
         return isAuthenticated;
     }
 
+    private async Task DeleteUserManagementAsync()
+    {
+        if (_authService.CurrentUser is null)
+        {
+            Console.WriteLine("You must be logged in to remove the user management.");
+            Console.WriteLine();
+            return;
+        }
+        if (!_authService.CurrentUser.IsDefault)
+        {
+            Console.WriteLine("You must be logged in as the default user to remove the user management.");
+            Console.WriteLine();
+            return;
+        }
+
+        if (!await AuthenticateCurrentUserAsync().ConfigureAwait(false))
+        {
+            Console.WriteLine("Could not authenticate user. Removing user management failed.");
+            Console.WriteLine();
+            return;
+        }
+        
+        if (!ConsoleInputHelper.GetUserConfirmation(
+            "!!! DANGER ZONE !!!\n\n" +
+            "Removing user management cannot be undone!\n" +
+            "All registered users will be wiped from storage.\n\n" +
+            "Do you want to proceed anyway?"))
+        {
+            _canProceedToSubMenu = false;
+            Console.WriteLine("User management removal cancelled.");
+            Console.WriteLine();
+            return;
+        }
+
+        await RemoveUserRepositoryAsync(userManager).ConfigureAwait(false);
+
+        Console.WriteLine();
+        Console.WriteLine("You have successfully removed the user management.\n" +
+            "The application will exit now.\n" +
+            "If you start it again, a new user management will be created in its stead.");
+        Console.WriteLine();
+
+        Exit();
+    }
+
+    private static async Task RemoveUserRepositoryAsync(UserManager userManager)
+    {
+        try
+        {
+            await userManager.DeleteRepositoryAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Could not remove user management. Please try again.");
+            Console.WriteLine(ExceptionHelper.UnpackException(ex));
+            Console.WriteLine();
+            return;
+        }
+    }
+
     protected override List<MenuItem> CreateMenuItems()
     {
         return

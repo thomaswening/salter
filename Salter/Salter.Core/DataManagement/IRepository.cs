@@ -14,6 +14,7 @@ public interface IRepository<T> where T : notnull, Entity
     List<T> Cache { get; }
     Task AddRecordAsync(T record);
     Task ClearAllRecordsAsync();
+    Task DeleteRepositoryAsync();
     Task<List<T>> GetRecordsAsync();
 
     /// <summary>

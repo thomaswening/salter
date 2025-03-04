@@ -209,4 +209,28 @@ public class JsonRepository<T, TDto> : Repository<T>
 
         throw new RepositoryException(message, ex);
     }
-}   
+
+    public override Task DeleteRepositoryAsync()
+    {
+        try
+        {
+            File.Delete(location.LocalPath);
+            Cache.Clear();
+        }
+        catch (Exception e)
+        {
+            ProcessAndThrowException(e, "delete repository");
+        }
+
+        try
+        {
+            encryptor.DeleteKey();
+        }
+        catch (Exception e)
+        {
+            ProcessAndThrowException(e, "delete encryption key");
+        }
+
+        return Task.CompletedTask;
+    }
+}

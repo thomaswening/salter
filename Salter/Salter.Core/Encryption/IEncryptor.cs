@@ -6,4 +6,5 @@ public interface IEncryptor
     Task<byte[]> DecryptAsync(byte[] data);
     byte[] Encrypt(byte[] data);
     Task<byte[]> EncryptAsync(byte[] data);
+    void DeleteKey();
 }

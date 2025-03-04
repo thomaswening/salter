@@ -63,6 +63,9 @@ public abstract class Repository<T> : IRepository<T> where T : notnull, Entity
 
     /// <inheritdoc/>
     public abstract Task ClearAllRecordsAsync();
+
+    /// <inheritdoc/>
+    public abstract Task DeleteRepositoryAsync();
 }
 
 public class RepositoryException : Exception

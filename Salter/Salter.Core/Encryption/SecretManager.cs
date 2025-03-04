@@ -15,6 +15,7 @@ public abstract partial class SecretManager(SecretManager.SourceType sourceType)
     [GeneratedRegex("^[a-zA-Z_][a-zA-Z0-9_]*$")]
     private static partial Regex EnvironmentVariableNamePattern();
 
+    private const string ProcessVariablePrefix = "TEMP_";
     protected readonly SourceType sourceType = sourceType;
     public enum SourceType
     {
@@ -66,12 +67,25 @@ public abstract partial class SecretManager(SecretManager.SourceType sourceType)
         {
             var base64 = Convert.ToBase64String(data);
 
-            Environment.SetEnvironmentVariable("TEMP_" + source, base64, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable(ProcessVariablePrefix + source, base64, EnvironmentVariableTarget.Process);
             Environment.SetEnvironmentVariable(source, base64, EnvironmentVariableTarget.User);
         }
         catch (Exception ex)
         {
             throw new InvalidOperationException($"Failed to save to environment variable '{source}'.", ex);
+        }
+    }
+
+    protected static void DeleteFromEnvironment(string source)
+    {
+        try
+        {
+            Environment.SetEnvironmentVariable(ProcessVariablePrefix + source, null, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable(source, null, EnvironmentVariableTarget.User);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to delete environment variable '{source}'.", ex);
         }
     }
 
@@ -96,6 +110,18 @@ public abstract partial class SecretManager(SecretManager.SourceType sourceType)
         catch (Exception ex)
         {
             throw new InvalidOperationException($"Failed to load from file asynchronously '{source}'.", ex);
+        }
+    }
+
+    protected static void DeleteFromFile(string source)
+    {
+        try
+        {
+            File.Delete(source);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to delete file '{source}'.", ex);
         }
     }
 
