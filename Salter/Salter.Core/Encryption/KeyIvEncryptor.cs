@@ -120,4 +120,6 @@ public class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> algo
         await stream.CopyToAsync(ms);
         return ms.ToArray();
     }
+
+    public void DeleteKey() => keyManager.Delete();
 }

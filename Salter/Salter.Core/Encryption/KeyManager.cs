@@ -84,4 +84,22 @@ public class KeyManager : SecretManager
                 throw new InvalidOperationException("Invalid key source type.");
         }
     }
+
+    public void Delete()
+    {
+        switch (options.SourceType)
+        {
+            case SourceType.Environment:
+                DeleteFromEnvironment(options.KeySource);
+                DeleteFromEnvironment(options.InitializationVectorSource);
+                break;
+            case SourceType.File:
+                DeleteFromFile(options.KeySource);
+                DeleteFromFile(options.InitializationVectorSource);
+                break;
+            default:
+                throw new InvalidOperationException("Invalid key source type.");
+        }
+    }
 }
+ 

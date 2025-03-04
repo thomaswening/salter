@@ -5,6 +5,7 @@ using Salter.Encryption;
 using System.Security.Cryptography;
 using Salter.Core;
 using Salter.Cmd.Menus;
+using System.Diagnostics;
 
 namespace Salter.Cmd;
 
@@ -41,9 +42,17 @@ internal class Program
             Console.WriteLine(ExceptionHelper.UnpackException(e));
 
             SaveErrorLog(e);
+            if (ConsoleInputHelper.GetUserConfirmation("Would you like to view the error log?"))
+            {
+                OpenLogDirectory();
+            }
         }
+    }
 
-        ConsoleInputHelper.PromptContinue();
+    private static void OpenLogDirectory()
+    {
+        var logDirectory = AppConstants.AppDirectoryUri.LocalPath;
+        Process.Start("explorer.exe", logDirectory);
     }
 
     private static JsonRepository<User, UserDto> InitializeRepository()

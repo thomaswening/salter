@@ -129,6 +129,11 @@ public class UserManager(IRepository<User> repository, PasswordHasher passwordHa
             await repo.UpdateRecordAsync(newDefaultUser).ConfigureAwait(false);
         }
     }
+
+    public async Task DeleteRepositoryAsync()
+    {
+        await repo.DeleteRepositoryAsync().ConfigureAwait(false);
+    }
 }
 
 public class UserAlreadyExistsException(string message, string username) : Exception(message)

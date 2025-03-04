@@ -22,7 +22,7 @@ internal class MenuDisplay
     public async Task StartAsync()
     {
         var isExit = false;
-        while (!isExit)
+        while (!isExit && !_isExitRequested)
         {
             _isCurrentMenuChanged = false;            
 
