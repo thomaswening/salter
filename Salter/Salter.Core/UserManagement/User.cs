@@ -46,6 +46,7 @@ public class User : Entity
     public Role Role { get; }
     public string Salt { get; }
     public string Username { get; }
+    public static User NoUser { get; } = new(Guid.Empty, "nouser", "nouser", "nouser", Role.User, false);
 
     /// <summary>
     /// This method is meant to create a user object for the default user account from the database.

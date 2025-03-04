@@ -7,7 +7,7 @@ public partial class AuthenticationService(UserManager userManager, PasswordHash
     private readonly UserManager userManager = userManager;
     public PasswordHasher Hasher => passwordHasher;
 
-    public User? CurrentUser { get; private set; }
+    public User CurrentUser { get; private set; } = User.NoUser;
 
     public async Task<bool> AuthenticateAsync(string username, char[] password)
     {
@@ -42,7 +42,7 @@ public partial class AuthenticationService(UserManager userManager, PasswordHash
 
     public async Task<bool> AuthenticateCurrentUserAsync(char[] password)
     {
-        if (CurrentUser is null)
+        if (CurrentUser == User.NoUser)
         {
             throw new AuthenticationServiceException("Current user is null.");
         }
@@ -81,13 +81,13 @@ public partial class AuthenticationService(UserManager userManager, PasswordHash
 
     public async Task RefreshCurrentUserAsync()
     {
-        if (CurrentUser is null)
+        if (CurrentUser == User.NoUser)
         {
             throw new NoAuthenticatedUserException();
         }
 
         var users = await userManager.GetUsersAsync();
-        CurrentUser = users.FirstOrDefault(u => u.Equals(CurrentUser));
+        CurrentUser = users.FirstOrDefault(u => u.Equals(CurrentUser)) ?? User.NoUser;
     }
 
     public static bool ValidatePassword(char[] password, out string errorMessage)
@@ -109,7 +109,7 @@ public partial class AuthenticationService(UserManager userManager, PasswordHash
         return true;
     }
 
-    public void Logout() => CurrentUser = null;
+    public void Logout() => CurrentUser = User.NoUser;
 
     public bool ValidateUsername(string username, out string errorMessage)
     {
