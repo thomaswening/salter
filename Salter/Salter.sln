@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salter.ConsoleHasher", "Salter.ConsoleHasher\Salter.ConsoleHasher.csproj", "{4A729D82-60C1-430B-889B-3CAB61B9D3BD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salter.Core", "Salter.Core\Salter.Core.csproj", "{958A9530-C04E-4771-9036-48974666B97A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salter.Persistence", "Salter.Persistence\Salter.Persistence.csproj", "{990F3D02-1C15-4A57-9BA9-F167D070483F}"
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4A729D82-60C1-430B-889B-3CAB61B9D3BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A729D82-60C1-430B-889B-3CAB61B9D3BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A729D82-60C1-430B-889B-3CAB61B9D3BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A729D82-60C1-430B-889B-3CAB61B9D3BD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{958A9530-C04E-4771-9036-48974666B97A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{958A9530-C04E-4771-9036-48974666B97A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{958A9530-C04E-4771-9036-48974666B97A}.Release|Any CPU.ActiveCfg = Release|Any CPU
