@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Data;
+using System.Security.Cryptography;
 
 namespace Salter.Core.Encryption;
 
@@ -8,14 +9,14 @@ namespace Salter.Core.Encryption;
 /// </summary>
 public class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> algorithmFactory) : IEncryptor
 {
-    private readonly KeyManager keyManager = keyManager;
     private readonly Func<SymmetricAlgorithm> algorithmFactory = algorithmFactory;
-
+    private readonly KeyManager keyManager = keyManager;
     public byte[] Decrypt(byte[] encryptedData)
     {
+        using var algorithm = algorithmFactory();
+
         try
         {
-            using var algorithm = algorithmFactory();
             (algorithm.Key, algorithm.IV) = keyManager.Load();
 
             using var decryptor = algorithm.CreateDecryptor(algorithm.Key, algorithm.IV);
@@ -28,13 +29,18 @@ public class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> algo
         {
             throw new CryptographicException("Decryption failed.", ex);
         }
+        finally
+        {
+            WipeSecretsFromMemory(algorithm);
+        }
     }
 
     public async Task<byte[]> DecryptAsync(byte[] encryptedData)
     {
+        using var algorithm = algorithmFactory();
+
         try
         {
-            using var algorithm = algorithmFactory();
             (algorithm.Key, algorithm.IV) = await keyManager.LoadAsync();
 
             using var decryptor = algorithm.CreateDecryptor(algorithm.Key, algorithm.IV);
@@ -47,13 +53,20 @@ public class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> algo
         {
             throw new CryptographicException("Decryption failed.", ex);
         }
+        finally
+        {
+            WipeSecretsFromMemory(algorithm);
+        }
     }
+
+    public void DeleteKey() => keyManager.Delete();
 
     public byte[] Encrypt(byte[] data)
     {
+        using var algorithm = algorithmFactory();
+
         try
         {
-            using var algorithm = algorithmFactory();
             GenerateKeyAndIv(algorithm);
             using var encryptor = algorithm.CreateEncryptor(algorithm.Key, algorithm.IV);
             using var ms = new MemoryStream();
@@ -72,14 +85,16 @@ public class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> algo
         finally
         {
             Array.Clear(data, 0, data.Length);
+            WipeSecretsFromMemory(algorithm);
         }
     }
 
     public async Task<byte[]> EncryptAsync(byte[] data)
     {
+        using var algorithm = algorithmFactory();
+
         try
         {
-            using var algorithm = algorithmFactory();
             GenerateKeyAndIv(algorithm);
             using var encryptor = algorithm.CreateEncryptor(algorithm.Key, algorithm.IV);
             using var ms = new MemoryStream();
@@ -98,6 +113,7 @@ public class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> algo
         finally
         {
             Array.Clear(data, 0, data.Length);
+            WipeSecretsFromMemory(algorithm);
         }
     }
 
@@ -121,5 +137,9 @@ public class KeyIvEncryptor(KeyManager keyManager, Func<SymmetricAlgorithm> algo
         return ms.ToArray();
     }
 
-    public void DeleteKey() => keyManager.Delete();
+    private static void WipeSecretsFromMemory(SymmetricAlgorithm algorithm)
+    {
+        Array.Clear(algorithm.Key, 0, algorithm.Key.Length);
+        Array.Clear(algorithm.IV, 0, algorithm.IV.Length);
+    }
 }
