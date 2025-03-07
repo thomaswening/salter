@@ -67,10 +67,7 @@ The uninstallation process consists of two steps:
    - If they confirm, a file explorer window opens at the directory location, and the process continues only after the user verifies deletion.  
 
 2. **Self-deletion of the executable**  
-   - The application cannot delete its own executable directly. Instead, a **cmd process** is started that schedules the deletion via a timeout.  
-   - If any errors occur, the user is prompted to manually delete the remaining files.  
-   - A final check is performed to confirm deletion before the process is completed.  
-   - If any files remain or the user declines manual deletion, the uninstallation is aborted, and the console returns to the menu.  
+   - The application cannot delete its own executable directly. Instead, a **cmd process** is started that schedules the deletion via a timeout.
 
 ## Logging  
 
